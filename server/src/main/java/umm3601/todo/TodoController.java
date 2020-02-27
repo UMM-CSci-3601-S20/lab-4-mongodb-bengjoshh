@@ -43,6 +43,20 @@ public class TodoController {
   }
 
   public void getTodo(Context ctx) {
+    String id = ctx.pathParam("id");
+
+    Todo todo;
+
+    try {
+      todo = todoCollection.find(eq("_id", new ObjectId(id))).first();
+   } catch (IllegalArgumentException e) {
+     throw new BadRequestResponse("The requested todo id wasn't a legal Mongo Object ID.");
+   }
+   if (todo == null) {
+     throw new NotFoundResponse("The requested todo could not be found.");
+   } else {
+     ctx.json(todo);
+   }
 
   }
 
