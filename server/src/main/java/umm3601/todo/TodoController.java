@@ -62,6 +62,8 @@ public class TodoController {
 
   public void getTodos(Context ctx) {
 
+    ctx.json(todoCollection.find(new Document())
+    .into(new ArrayList<>()));
   }
 
   public void addTodo(Context ctx) {

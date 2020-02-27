@@ -177,7 +177,9 @@ public class TodoControllerSpec {
     assertEquals(200, mockRes.getStatus());
 
     String result = ctx.resultString();
-    assertEquals(db.getCollection("todos"), JavalinJson.fromJson(result, MongoCollection.class));
+    MongoCollection<Document> todosCollection = db.getCollection("todos");
+    //assertEquals(todosCollection, JavalinJson.fromJson(result, Class<MongoCollection<Document>>);
+    assertEquals(todosCollection.countDocuments(), JavalinJson.fromJson(result, Todo[].class).length);
   }
 
   @Test
