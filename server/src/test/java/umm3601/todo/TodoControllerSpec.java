@@ -50,7 +50,8 @@ public class TodoControllerSpec {
 
   private TodoController todoController;
 
-  private ObjectId testingId;
+  private ObjectId bensId;
+  private BasicDBObject ben;
 
   static MongoClient mongoClient;
   static MongoDatabase db;
@@ -80,7 +81,7 @@ public class TodoControllerSpec {
     // Setup database
     MongoCollection<Document> todoDocuments = db.getCollection("todos");
     todoDocuments.drop();
-    List<Document> testtodos = new ArrayList<>();
+    List<Document> testTodos = new ArrayList<>();
     testTodos.add(Document.parse("{\n" +
     "                           owner: \"Fred\",\n" +
     "                           status: false,\n" +
@@ -101,6 +102,41 @@ public class TodoControllerSpec {
     "                           status: false,\n" +
     "                           body: \"This is Sara's funky todo\",\n" +
     "                           category: \"homework\"\n}"));
+    bensId = new ObjectId();
+    ben = new BasicDBObject("_id", bensId);
+    ben = ben.append("owner", "Ben")
+    .append("status", true)
+    .append("body", "Needs todo database features")
+    .append("category", "software design");
+
+    todoDocuments.insertMany(testTodos);
+    todoDocuments.insertOne(Document.parse(ben.toJson()));
+
+    todoController = new TodoController(db);
+
+  }
+
+  @AfterAll
+  public static void teardown() {
+    db.drop();
+    mongoClient.close();
+  }
+
+  @Test
+  public void GetTodoById() throws IOException{
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos/:id", new ImmutableMap("id", bensId.toHexString()));
+    todoController.getTodo(ctx);
+
+    assertEquals(200, mockRes.getStatus());
+
+
+    String result = ctx.resultString();
+    //Todo resultTodo = JavalinJson.fromJson(result, Todo.class);
+
+
+    BasicDBObject resultDbObj = JavalinJson.fromJson(result, BasicDBObject.class);
+
+    assertEquals(resultDbObj, ben);
   }
 
 }
