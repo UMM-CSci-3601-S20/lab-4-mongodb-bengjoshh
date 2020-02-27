@@ -38,6 +38,8 @@ import io.javalin.http.NotFoundResponse;
 import io.javalin.http.util.ContextUtil;
 import io.javalin.plugin.json.JavalinJson;
 
+
+
 /**
 * Tests the logic of the TodoController
 *
@@ -124,19 +126,36 @@ public class TodoControllerSpec {
 
   @Test
   public void GetTodoById() throws IOException{
-    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos/:id", new ImmutableMap("id", bensId.toHexString()));
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos/:id", ImmutableMap.of("id", bensId.toHexString()));
     todoController.getTodo(ctx);
 
     assertEquals(200, mockRes.getStatus());
 
-
     String result = ctx.resultString();
     //Todo resultTodo = JavalinJson.fromJson(result, Todo.class);
-
-
     BasicDBObject resultDbObj = JavalinJson.fromJson(result, BasicDBObject.class);
-
     assertEquals(resultDbObj, ben);
+  }
+
+  @Test
+  public void GetTodoByInvalidID() throws IOException {
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos/:id", ImmutableMap.of("id", "badID"));
+
+    assertThrows(BadRequestResponse.class, () -> {
+      todoController.getTodo(ctx);
+    } );
+
+  }
+
+  @Test
+  public void GetTodoByNonexistentID() throws IOException {
+
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos/:id", ImmutableMap.of("id", "ffffffffffffffffffffffff"));
+
+    assertThrows(NotFoundResponse.class, () -> {
+      todoController.getTodo(ctx);
+    } );
+
   }
 
 }
