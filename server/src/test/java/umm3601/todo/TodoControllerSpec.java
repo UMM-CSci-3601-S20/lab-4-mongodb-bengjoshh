@@ -167,4 +167,125 @@ public class TodoControllerSpec {
 
   }
 
+  @Test
+  public void GetAllTodos() throws IOException {
+
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+
+    todoController.getTodos(ctx);
+
+    assertEquals(200, mockRes.getStatus());
+
+    String result = ctx.resultString();
+    assertEquals(db.getCollection("todos"), JavalinJson.fromJson(result, MongoCollection.class));
+  }
+
+  @Test
+  public void GetTodosByStatus() throws IOException {
+
+    mockReq.setQueryString("status=incomplete");
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+
+    todoController.getTodos(ctx);
+    assertEquals(200, mockRes.getStatus());
+
+    String result = ctx.resultString();
+    Todo[] resultArray = JavalinJson.fromJson(result, Todo[].class);
+    assertEquals(3, resultArray.length);
+    for (Todo todo: resultArray) {
+      assertTrue(!todo.status);
+    }
+  }
+
+  @Test
+  public void GetTodosByBadStatus() throws IOException {
+    mockReq.setQueryString("status=foo");
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+
+    assertThrows(BadRequestResponse.class, () -> {
+      todoController.getTodos(ctx);
+    });
+  }
+
+  @Test
+  public void GetTodosByOwner() throws IOException {
+
+    mockReq.setQueryString("owner=Todd");
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+
+    todoController.getTodos(ctx);
+    assertEquals(200, mockRes.getStatus());
+
+    String result = ctx.resultString();
+    Todo[] resultArray = JavalinJson.fromJson(result, Todo[].class);
+    assertEquals(1, resultArray.length);
+    assertEquals("Todd", resultArray[0].owner);
+  }
+
+  @Test
+  public void GetTodosByBody() throws IOException {
+
+    mockReq.setQueryString("body=cool");
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+
+    todoController.getTodos(ctx);
+    assertEquals(200, mockRes.getStatus());
+
+    String result = ctx.resultString();
+    Todo[] resultArray = JavalinJson.fromJson(result, Todo[].class);
+    assertEquals(2, resultArray.length);
+    for(Todo todo: resultArray){
+      assertTrue(todo.body.contains("cool"));
+    }
+  }
+
+  @Test
+  public void GetTodosByCategory() throws IOException {
+
+    mockReq.setQueryString("category=homework");
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+
+    todoController.getTodos(ctx);
+    assertEquals(200, mockRes.getStatus());
+
+    String result = ctx.resultString();
+    Todo[] resultArray = JavalinJson.fromJson(result, Todo[].class);
+    assertEquals(2, resultArray.length);
+    for(Todo todo: resultArray){
+      assertTrue(todo.category == "homework");
+    }
+  }
+
+  @Test
+  public void GetTodosByMultipleCriteria() throws IOException {
+
+    mockReq.setQueryString("owner=Fred&body=cool");
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+
+    todoController.getTodos(ctx);
+    assertEquals(200, mockRes.getStatus());
+
+    String result = ctx.resultString();
+    Todo[] resultArray = JavalinJson.fromJson(result, Todo[].class);
+    assertEquals(1, resultArray.length);
+    Todo resultTodo = resultArray[0];
+    assertEquals("Fred", resultTodo.owner);
+    assertTrue(resultTodo.body.contains("cool"));
+  }
+
+  @Test
+  public void GetNoTodos() throws IOException {
+
+    mockReq.setQueryString("owner=nobody");
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+
+    todoController.getTodos(ctx);
+    assertEquals(200, mockRes.getStatus());
+
+    String result = ctx.resultString();
+    Todo[] resultArray = JavalinJson.fromJson(result, Todo[].class);
+    assertEquals(0, resultArray.length);
+
+  }
+
 }
