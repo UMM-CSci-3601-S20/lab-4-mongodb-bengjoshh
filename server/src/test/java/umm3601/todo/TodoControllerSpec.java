@@ -180,6 +180,24 @@ public class TodoControllerSpec {
     MongoCollection<Document> todosCollection = db.getCollection("todos");
     //assertEquals(todosCollection, JavalinJson.fromJson(result, Class<MongoCollection<Document>>);
     assertEquals(todosCollection.countDocuments(), JavalinJson.fromJson(result, Todo[].class).length);
+
+  }
+
+  @Test
+  public void GetTodoWithExistentID() throws IOException{
+    String testID = bensId.toHexString();
+
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos/:id", ImmutableMap.of("id", testID));
+    todoController.getTodo(ctx);
+
+    assertEquals(200, mockRes.getStatus());
+
+    String result = ctx.resultString();
+    Todo resultTodo = JavalinJson.fromJson(result, Todo.class);
+
+    assertEquals(resultTodo._id, bensId.toHexString());
+    assertEquals(resultTodo.owner, "Ben");
+
   }
 
   @Test
