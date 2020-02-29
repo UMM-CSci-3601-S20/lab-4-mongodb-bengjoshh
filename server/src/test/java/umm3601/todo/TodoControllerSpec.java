@@ -201,7 +201,7 @@ public class TodoControllerSpec {
   }
 
   @Test
-  public void GetTodosByStatus() throws IOException {
+  public void GetTodosByStatusFalse() throws IOException {
 
     mockReq.setQueryString("status=incomplete");
     Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
@@ -216,6 +216,26 @@ public class TodoControllerSpec {
       assertTrue(!todo.status);
     }
   }
+
+  @Test
+  public void GetTodosStatusTrue() throws IOException{
+
+    mockReq.setQueryString("status=complete");
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+
+    todoController.getTodos(ctx);
+    assertEquals(200, mockRes.getStatus());
+    String result = ctx.resultString();
+    System.out.println(result);
+    Todo[] resultArray2 = JavalinJson.fromJson(result, Todo[].class);
+    assertEquals(2, resultArray2.length);
+    for (Todo todo: resultArray2) {
+      assertTrue(todo.status);
+    }
+  }
+
+
+
 
   @Test
   public void GetTodosByBadStatus() throws IOException {
