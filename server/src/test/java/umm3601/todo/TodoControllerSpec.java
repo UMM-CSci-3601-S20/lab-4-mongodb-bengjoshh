@@ -203,7 +203,7 @@ public class TodoControllerSpec {
   @Test
   public void GetTodosByStatusFalse() throws IOException {
 
-    mockReq.setQueryString("status=incomplete");
+    mockReq.setQueryString("status=false");
     Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
 
     todoController.getTodos(ctx);
@@ -220,7 +220,7 @@ public class TodoControllerSpec {
   @Test
   public void GetTodosStatusTrue() throws IOException{
 
-    mockReq.setQueryString("status=complete");
+    mockReq.setQueryString("status=true");
     Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
 
     todoController.getTodos(ctx);
