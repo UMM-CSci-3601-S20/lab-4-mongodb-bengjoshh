@@ -9,7 +9,7 @@ import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 
 import io.javalin.Javalin;
-
+import umm3601.todo.TodoController;
 import umm3601.user.UserController;
 
 public class Server {
@@ -38,6 +38,7 @@ public class Server {
 
     // Initialize dependencies
     UserController userController = new UserController(database);
+    TodoController todoController = new TodoController(database);
     //UserRequestHandler userRequestHandler = new UserRequestHandler(userController);
 
     Javalin server = Javalin.create().start(4567);
@@ -58,6 +59,12 @@ public class Server {
 
     // Add new user
     server.post("api/users/new", userController::addNewUser);
+
+    // Get specific todo
+    server.get("api/todos/:id", todoController::getTodo);
+
+    // List todos, filtered using query parameters
+    server.get("api/todos", todoController::getTodos);
 
 
 
