@@ -116,7 +116,7 @@ describe('Todo service: ', () => {
   it('getTodoById() calls api/todos/id', () => {
     const targetTodo: Todo = testTodos[1];
     const targetId: string = targetTodo._id;
-    todoService.getTodoById(targetId).subscribe(
+    todoService.getTodoByID(targetId).subscribe(
       todo => expect(todo).toBe(targetTodo)
     );
 
