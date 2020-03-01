@@ -7,5 +7,26 @@ import { map } from 'rxjs/operators';
 
 @Injectable()
 export class TodoService {
+  readonly todoURL: string = environment.API_URL + "todos";
+
+  constructor(private httpClient: HttpClient){
+
+  }
+
+  getTodos(){
+
+  }
+
+  getTodoByID(){
+
+  }
+
+  filterTodos(){
+
+  }
+
+  addTodo(){
+
+  }
 
 }
