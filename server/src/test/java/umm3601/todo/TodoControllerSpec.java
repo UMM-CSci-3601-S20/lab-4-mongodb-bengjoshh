@@ -237,15 +237,15 @@ public class TodoControllerSpec {
 
 
 
-  // @Test
-  // public void GetTodosByBadStatus() throws IOException {
-  //   mockReq.setQueryString("status= ");
-  //   Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
+  @Test
+  public void GetTodosByBadStatus() throws IOException {
+    mockReq.setQueryString("status=foo ");
+    Context ctx = ContextUtil.init(mockReq, mockRes, "api/todos");
 
-  //   assertThrows(BadRequestResponse.class, () -> {
-  //     todoController.getTodos(ctx);
-  //   });
-  // }
+    assertThrows(BadRequestResponse.class, () -> {
+      todoController.getTodos(ctx);
+    });
+  }
 
   // @Test
   // public void GetTodosByOwner() throws IOException {

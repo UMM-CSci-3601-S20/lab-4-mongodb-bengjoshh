@@ -69,7 +69,8 @@ public class TodoController {
         filters.add(eq("status", true));
       } else if(ctx.queryParam("status").equals("incomplete")) {
         filters.add(eq("status", false));
-      }
+      } else
+      filters.add(eq("status", new BadRequestResponse()));
     }
     ctx.json(todoCollection.find(filters.isEmpty() ? new Document() : and(filters))
     .into(new ArrayList<>()));
