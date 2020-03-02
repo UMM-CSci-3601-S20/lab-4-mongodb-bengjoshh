@@ -49,23 +49,27 @@ public class TodoController {
 
     try {
       todo = todoCollection.find(eq("_id", new ObjectId(id))).first();
-   } catch (IllegalArgumentException e) {
-     throw new BadRequestResponse("The requested todo id wasn't a legal Mongo Object ID.");
-   }
-   if (todo == null) {
-     throw new NotFoundResponse("The requested todo could not be found.");
-   } else {
-     ctx.json(todo);
-   }
+    } catch (IllegalArgumentException e) {
+      throw new BadRequestResponse("The requested todo id wasn't a legal Mongo Object ID.");
+    }
+    if (todo == null) {
+      throw new NotFoundResponse("The requested todo could not be found.");
+    } else {
+      ctx.json(todo);
+    }
 
   }
 
   public void getTodos(Context ctx) {
     List<Bson> filters = new ArrayList<Bson>(); // start with a blank document
 
-    if(ctx.queryParamMap().containsKey("status")){
-      boolean targetStatus = ctx.queryParam("status").equals("complete");
-      filters.add(eq("status", targetStatus));
+    if (ctx.queryParamMap().containsKey("status")) {
+      String statusVal = ctx.queryParam("status").toLowerCase();
+      if(statusVal.equals("complete") | statusVal.equals("incomplete")){
+        filters.add(eq("status", ctx.queryParam("status").equals("complete")));
+      } else {
+        throw new BadRequestResponse("Status can only be 'complete' or 'incomplete'.");
+      }
     }
     ctx.json(todoCollection.find(filters.isEmpty() ? new Document() : and(filters))
     .into(new ArrayList<>()));
