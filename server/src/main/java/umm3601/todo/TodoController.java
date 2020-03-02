@@ -76,8 +76,17 @@ public class TodoController {
     .into(new ArrayList<>()));
   }
 
-  public void addTodo(Context ctx) {
+  public void addNewTodo(Context ctx) {
+    Todo newTodo = ctx.bodyValidator(Todo.class)
+      .check((todo) -> todo.owner != null) //Verify that the todo has an owner that is not blank
+      .check((todo) -> todo.category != null) // Verify that the provided age is > 0
+      .get();
 
+
+
+    todoCollection.insertOne(newTodo);
+    ctx.status(201);
+    ctx.json(ImmutableMap.of("id", newTodo._id));
   }
 
   public void deleteTodo(Context ctx) {
