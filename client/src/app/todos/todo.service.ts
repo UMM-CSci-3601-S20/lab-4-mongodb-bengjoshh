@@ -1,0 +1,70 @@
+import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
+import { Todo } from './todo';
+import { map } from 'rxjs/operators';
+
+@Injectable()
+export class TodoService {
+  readonly todoURL: string = environment.API_URL + 'todos';
+
+  constructor(private httpClient: HttpClient) {
+
+  }
+
+  getTodos(filters?: { status?: string }): Observable<Todo[]> {
+    let httpParams: HttpParams = new HttpParams();
+    if (filters) {
+      if (filters.status) {
+        httpParams = httpParams.set('status', filters.status);
+      }
+
+      return this.httpClient.get<Todo[]>(this.todoURL, {
+        params: httpParams,
+      });
+    }
+  }
+
+  getTodoByID(id: string): Observable<Todo> {
+    return this.httpClient.get<Todo>(this.todoURL + '/' + id);
+  }
+
+  filterTodos(todos: Todo[], filters: {owner?: string, body?: string, category?: string}): Todo[] {
+    let filteredTodos = todos;
+
+    // Filter by owner
+    if (filters.owner) {
+      filters.owner = filters.owner.toLowerCase();
+
+      filteredTodos = filteredTodos.filter(todo => {
+        return todo.owner.toLowerCase().includes(filters.owner);
+      });
+    }
+
+    // Filter by body
+    if (filters.body) {
+      filters.body = filters.body.toLowerCase();
+
+      filteredTodos = filteredTodos.filter(todo => {
+        return todo.body.toLowerCase().includes(filters.body);
+      });
+    }
+
+    // Filter by category
+    if (filters.category) {
+      filters.category = filters.category.toLowerCase();
+
+      filteredTodos = filteredTodos.filter(todo => {
+        return todo.category.toLowerCase().includes(filters.category);
+      });
+    }
+
+    return filteredTodos;
+  }
+
+  addTodo(){
+
+  }
+
+}
