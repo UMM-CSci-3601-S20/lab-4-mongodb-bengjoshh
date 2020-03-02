@@ -63,7 +63,6 @@ const MATERIAL_MODULES: any[] = [
     UserCardComponent,
     UserProfileComponent,
     AddUserComponent,
-    TodoService,
     TodoListComponent,
     TodoProfileComponent,
   ],
