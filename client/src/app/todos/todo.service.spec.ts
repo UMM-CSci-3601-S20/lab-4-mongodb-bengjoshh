@@ -92,7 +92,7 @@ describe('Todo service: ', () => {
 
   it('getTodos() calls api/todos with multiple filter parameters', () => {
 
-    todoService.getTodos({ owner: 'Josh', category: 'mother\'s wishes', status: 'incomplete' }).subscribe(
+    todoService.getTodos({ status: 'complete' }).subscribe(
       todos => expect(todos).toBe(testTodos)
     );
 
