@@ -61,6 +61,7 @@ public class TodoController {
   }
 
   public void getTodos(Context ctx) {
+
     List<Bson> filters = new ArrayList<Bson>(); // start with a blank document
 
     if(ctx.queryParamMap().containsKey("status")){
