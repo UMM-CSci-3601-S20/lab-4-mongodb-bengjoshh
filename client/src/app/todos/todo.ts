@@ -6,4 +6,4 @@ export interface Todo {
   category: string;
 }
 
-
+export type TodoStatus = 'complete' | 'incomplete';
