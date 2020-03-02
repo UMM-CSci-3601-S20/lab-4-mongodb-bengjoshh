@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Todo } from './todo';
+import { Todo, TodoStatus } from './todo';
 import { TodoService } from './todo.service';
 import { Subscription } from 'rxjs';
 
@@ -11,12 +11,49 @@ import { Subscription } from 'rxjs';
 
 export class TodoListComponent implements OnInit, OnDestroy {
 
-  ngOnInit() {
+   // These are public so that tests can reference them (.spec.ts)
+   public serverFilteredTodos: Todo[];
+   public filteredTodos: Todo[];
 
+   public todoOwner: string;
+   public todoStatus: TodoStatus;
+   public todoBody: string;
+   public todoCategory: string;
+   public viewType: 'card' | 'list' = 'card';
+   getTodosSub: Subscription;
+
+  constructor(private todoService: TodoService) {
+  }
+
+  getTodosFromServer(): void {
+    this.unsub();
+    this.getTodosSub = this.todoService.getTodos({
+      status: this.todoStatus,
+    }).subscribe(returnedTodos => {
+      this.serverFilteredTodos = returnedTodos;
+      this.updateFilter();
+    }, err => {
+      console.log(err);
+    });
+  }
+
+  public updateFilter(): void {
+    this.filteredTodos = this.todoService.filterTodos(
+      this.serverFilteredTodos, { owner: this.todoOwner, category: this.todoCategory, body: this.todoBody });
+  }
+
+  ngOnInit() {
+    this.getTodosFromServer();
   }
 
   ngOnDestroy() {
+    this.unsub();
+  }
 
+  unsub(): void {
+    if (this.getTodosSub) {
+      this.getTodosSub.unsubscribe();
+    }
   }
 
 }
