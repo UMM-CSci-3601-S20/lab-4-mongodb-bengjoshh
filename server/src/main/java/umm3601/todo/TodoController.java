@@ -61,8 +61,13 @@ public class TodoController {
   }
 
   public void getTodos(Context ctx) {
+    List<Bson> filters = new ArrayList<Bson>(); // start with a blank document
 
-    ctx.json(todoCollection.find(new Document())
+    if(ctx.queryParamMap().containsKey("status")){
+      boolean targetStatus = ctx.queryParam("status").equals("complete");
+      filters.add(eq("status", targetStatus));
+    }
+    ctx.json(todoCollection.find(filters.isEmpty() ? new Document() : and(filters))
     .into(new ArrayList<>()));
   }
 
