@@ -28,11 +28,22 @@ describe('Todo service: ', () => {
       category: 'chores'
     }
   ];
-  let todoService: TodoService;
+
   let httpClient: HttpClient;
+  let todoService: TodoService;
   let httpTestingController: HttpTestingController;
 
+
   beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule]
+    });
+    httpClient = TestBed.inject(HttpClient);
+    httpTestingController = TestBed.inject(HttpTestingController);
+    todoService = new TodoService(httpClient);
+  });
+
+  afterEach(() => {
     httpTestingController.verify();
   });
 
@@ -92,7 +103,7 @@ describe('Todo service: ', () => {
 
   it('getTodos() calls api/todos with multiple filter parameters', () => {
 
-    todoService.getTodos({ status: 'complete' }).subscribe(
+    todoService.getTodos({ status: 'incomplete', category: 'mother\'s wishes', owner: 'Josh' }).subscribe(
       todos => expect(todos).toBe(testTodos)
     );
 

@@ -16,7 +16,7 @@ export class TodoListComponent implements OnInit, OnDestroy {
    public filteredTodos: Todo[];
 
    public todoOwner: string;
-   public todoStatus: TodoStatus;
+   public todoStatus: 'complete' | 'incomplete' | '';
    public todoBody: string;
    public todoCategory: string;
    public viewType: 'card' | 'list' = 'card';

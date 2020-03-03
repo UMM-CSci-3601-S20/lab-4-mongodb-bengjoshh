@@ -13,7 +13,7 @@ export class TodoService {
 
   }
 
-  getTodos(filters?: { status?: TodoStatus, owner?: string, body?: string, category?: string }): Observable<Todo[]> {
+  getTodos(filters?: { status?: string, owner?: string, body?: string, category?: string }): Observable<Todo[]> {
     let httpParams: HttpParams = new HttpParams();
     if (filters) {
       if (filters.status) {
@@ -29,13 +29,12 @@ export class TodoService {
       }
 
       if (filters.category) {
-        httpParams = httpParams.set('status', filters.category);
+        httpParams = httpParams.set('category', filters.category);
       }
-
-      return this.httpClient.get<Todo[]>(this.todoURL, {
-        params: httpParams,
-      });
     }
+    return this.httpClient.get<Todo[]>(this.todoURL, {
+      params: httpParams,
+    });
   }
 
   getTodoByID(id: string): Observable<Todo> {
