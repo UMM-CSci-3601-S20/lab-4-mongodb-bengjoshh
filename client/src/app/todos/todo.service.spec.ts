@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
 import { TestBed } from '@angular/core/testing';
-import { Todo } from './todo';
+import { Todo, TodoStatus } from './todo';
 import { TodoService } from './todo.service';
 
 describe('Todo service: ', () => {
@@ -28,11 +28,22 @@ describe('Todo service: ', () => {
       category: 'chores'
     }
   ];
-  let todoService: TodoService;
+
   let httpClient: HttpClient;
+  let todoService: TodoService;
   let httpTestingController: HttpTestingController;
 
+
   beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [HttpClientTestingModule]
+    });
+    httpClient = TestBed.inject(HttpClient);
+    httpTestingController = TestBed.inject(HttpTestingController);
+    todoService = new TodoService(httpClient);
+  });
+
+  afterEach(() => {
     httpTestingController.verify();
   });
 
@@ -52,7 +63,7 @@ describe('Todo service: ', () => {
 
   it('getTodos() calls api/todos with filter parameter true', () => {
 
-    todoService.getTodos({status: true}).subscribe(
+    todoService.getTodos({status: 'complete'}).subscribe(
       todos => expect(todos).toBe(testTodos)
     );
 
@@ -65,14 +76,14 @@ describe('Todo service: ', () => {
     expect(req.request.method).toEqual('GET');
 
     // Check that the role parameter was 'admin'
-    expect(req.request.params.get('status')).toEqual('true');
+    expect(req.request.params.get('status')).toEqual('complete');
 
     req.flush(testTodos);
   });
 
   it('getTodos() calls api/todos with filter parameter false', () => {
 
-    todoService.getTodos({ status: false }).subscribe(
+    todoService.getTodos({ status: 'incomplete' }).subscribe(
       todos => expect(todos).toBe(testTodos)
     );
 
@@ -85,14 +96,14 @@ describe('Todo service: ', () => {
     expect(req.request.method).toEqual('GET');
 
     // Check that the status parameter was false
-    expect(req.request.params.get('status')).toEqual('false');
+    expect(req.request.params.get('status')).toEqual('incomplete');
 
     req.flush(testTodos);
   });
 
   it('getTodos() calls api/todos with multiple filter parameters', () => {
 
-    todoService.getTodos({ owner: 'Josh', category: 'mother\'s wishes', status: false }).subscribe(
+    todoService.getTodos({ status: 'incomplete', category: 'mother\'s wishes', owner: 'Josh' }).subscribe(
       todos => expect(todos).toBe(testTodos)
     );
 
@@ -106,7 +117,7 @@ describe('Todo service: ', () => {
     expect(req.request.method).toEqual('GET');
 
     // Check that the role parameters are correct
-    expect(req.request.params.get('status')).toEqual('false');
+    expect(req.request.params.get('status')).toEqual('incomplete');
     expect(req.request.params.get('category')).toEqual('mother\'s wishes');
     expect(req.request.params.get('owner')).toEqual('Josh');
 
