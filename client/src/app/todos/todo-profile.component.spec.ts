@@ -5,14 +5,14 @@ import { RouterTestingModule } from '@angular/router/testing';
 import { ActivatedRouteStub } from '../../testing/activated-route-stub';
 import { MockTodoService } from '../../testing/todo.service.mock';
 import { Todo } from './todo';
-//import { TodoCardComponent } from './user-card.component';
+// import { TodoCardComponent } from './user-card.component';
 import { TodoProfileComponent } from './todo-profile.component';
 import { TodoService } from './todo.service';
 
 describe('TodoProfileComponent', () => {
   let component: TodoProfileComponent;
   let fixture: ComponentFixture<TodoProfileComponent>;
-  const activatedRoute: ActivatedRouteStub = new ActivatedRouteStub;
+  const activatedRoute: ActivatedRouteStub = new ActivatedRouteStub();
 
   beforeEach(async (() => {
     TestBed.configureTestingModule({
@@ -25,7 +25,6 @@ describe('TodoProfileComponent', () => {
         { provide: TodoService, useValue: new MockTodoService() },
         { provide: ActivatedRoute, useValue: activatedRoute},
       ]
-
     })
       .compileComponents();
   }));
@@ -60,7 +59,7 @@ describe('TodoProfileComponent', () => {
 
     expect(component.id).toEqual(expectedTodo._id);
 
-    // Changing the paramMap should update the displayed user profile.
+    // Changing the paramMap should update the displayed todo profile.
     expectedTodo = MockTodoService.testTodos[1];
     activatedRoute.setParamMap({ id: expectedTodo._id });
 
